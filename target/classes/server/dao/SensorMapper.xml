@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace 绑定一个对应的Mapper接口-->
+<mapper namespace="server.dao.SensorMapper">
+    <!--id对应方法名,resultType返回一种类型，resultMap返回多个类型，使用全限定名-->
+    <insert id="insertInfo" parameterType="server.pojo.SensorData">
+        insert into information (name,temperature,humidity,pressure,concentration_of_co2) values (#{name},#{temperature},#{humidity},#{pressure},#{concentrationOfCO2})
+    </insert>
+    <select id="getInfoByName" resultType="server.pojo.SensorData">
+        select from information where name=#{name}
+    </select>
+</mapper>
