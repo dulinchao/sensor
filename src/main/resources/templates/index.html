@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>传感器模拟</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+    <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
+    <script src="/js/sensor.js" type="application/javascript"></script>
+</head>
+<body>
+    <div>
+        <table class="table" id="dataTable">
+            <tr>
+                <th style="width: 20%">名称</th>
+                <th style="width: 20%">温度</th>
+                <th style="width: 20%">湿度</th>
+                <th style="width: 20%">压力</th>
+                <th style="width: 20%">二氧化碳浓度</th>
+            </tr>
+        </table>
+
+        <button onclick="stop('卧室')">停止卧室</button>
+    </div>
+</body>
+</html>

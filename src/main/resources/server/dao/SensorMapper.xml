@@ -8,7 +8,19 @@
     <insert id="insertInfo" parameterType="server.pojo.SensorData">
         insert into information (name,temperature,humidity,pressure,concentration_of_co2) values (#{name},#{temperature},#{humidity},#{pressure},#{concentrationOfCO2})
     </insert>
+    <insert id="insertNowData" parameterType="server.pojo.SensorData">
+        insert into latest (name,temperature,humidity,pressure,concentration_of_co2) values (#{name},#{temperature},#{humidity},#{pressure},#{concentrationOfCO2})
+    </insert>
+    <update id="updateNowData" parameterType="server.pojo.SensorData">
+        update latest set name=#{name},temperature=#{temperature},humidity=#{humidity},pressure=#{pressure},concentration_of_co2=#{concentrationOfCO2} where name=#{name}
+    </update>
     <select id="getInfoByName" resultType="server.pojo.SensorData">
-        select from information where name=#{name}
+        select * from information where name=#{name}
+    </select>
+    <select id="getNowData" resultType="server.pojo.SensorData">
+        select * from latest where name=#{name}
+    </select>
+    <select id="selectAllData" resultType="server.pojo.SensorData">
+        select * from latest;
     </select>
 </mapper>
