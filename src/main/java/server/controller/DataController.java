@@ -2,13 +2,13 @@ package server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import server.dao.SensorMapper;
 import server.pojo.SensorData;
 import server.service.Main;
 import server.service.SensorService;
+import server.service.ServerThread;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +29,7 @@ public class DataController {
     public List<SensorData> getData(){
         Collection<SensorData> values = Main.dataMap.values();
         final int size = values.size();
+        if(size==0) return null;
         List<SensorData> list = new ArrayList<>(values);
         return list;
     }
@@ -38,5 +39,18 @@ public class DataController {
     public String stop(@PathVariable(name = "name") String name){
         sensorService.stopSensor(name);
         return "ok";
+    }
+
+    @ResponseBody
+    @GetMapping("/change")
+    public String changeFlashTime(@RequestParam(name = "time") Integer time){
+        ServerThread.flashTime = time*1000;
+        return "ok";
+    }
+
+    @ResponseBody
+    @GetMapping("/gethistory")
+    public List<SensorData> getHistory(@RequestParam(name = "name") String name){
+        return sensorService.getHistory(name);
     }
 }

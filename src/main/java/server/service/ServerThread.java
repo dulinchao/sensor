@@ -2,28 +2,32 @@ package server.service;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import server.dao.SensorMapper;
 import server.pojo.SensorData;
 import server.utils.MybatisUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ServerThread implements Runnable{
     private Socket socket;
     private InputStream inputStream;
     private ObjectInputStream objectInputStream;
+    private OutputStream outputStream;
+    private ObjectOutputStream objectOutputStream;
     private SqlSession sqlSession;
     private SensorMapper sensorMapper;
+    public static int flashTime;  //要求客户端的采集周期
 
     //初始化socket和流，并且得到连接数据库的mapper
     public ServerThread(Socket socket) throws IOException {
         this.socket = socket;
         inputStream = socket.getInputStream();
         objectInputStream = new ObjectInputStream(inputStream);
-
+        outputStream = socket.getOutputStream();
+        objectOutputStream = new ObjectOutputStream(outputStream);
+        flashTime = 3000;
         //第一步：获得SqlSession对象
         sqlSession = MybatisUtils.getSqlSession();
         //方式一，getMapper：执行sql
@@ -37,16 +41,12 @@ public class ServerThread implements Runnable{
             String name = sensorData.getName();
 
             Main.dataMap.put(name,sensorData);
-//            if(sensorMapper.getNowData(name)==null){
-//                sensorMapper.insertNowData(sensorData);
-//            }else {
-//                sensorMapper.updateNowData(sensorData);
-//            }
 
 //            sensorMapper.insertInfo(sensorData);//写入数据库
             sqlSession.commit();
         }
         try {
+            outputStream.close();
             objectInputStream.close();
             inputStream.close();
         } catch (IOException e) {
@@ -58,6 +58,10 @@ public class ServerThread implements Runnable{
     private SensorData readFromClient(){
         try {
             SensorData data = (SensorData) objectInputStream.readObject();
+
+            Integer time = flashTime;
+            objectOutputStream.writeObject(time);
+
             //当socketMap中没有此Socket时，放进去
             if(data!=null && !Main.socketMap.containsKey(data.getName())){
                 Main.socketMap.put(data.getName(),socket);
