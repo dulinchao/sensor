@@ -1,12 +1,15 @@
 package client;
 
+import lombok.extern.slf4j.Slf4j;
 import server.pojo.SensorData;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Date;
 import java.util.Random;
 
+@Slf4j
 public class ClientThread implements Runnable{
     private Socket socket;
     private String address;
@@ -32,7 +35,6 @@ public class ClientThread implements Runnable{
                 objectOutputStream.flush();
 
                 Integer flashTime = (Integer) objectInputStream.readObject();
-                System.out.println(flashTime);
 
                 Thread.currentThread().sleep(flashTime);
             }
@@ -40,7 +42,9 @@ public class ClientThread implements Runnable{
             objectOutputStream.writeObject(null); //这句是为了让服务端知道客户端已经输出完了，并且要关闭输出流
             objectOutputStream.close();
             outputStream.close();
-        } catch (IOException e) {
+        } catch (SocketException e){
+            log.info("Socket"+name+"关闭");
+        } catch(IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -9,6 +9,7 @@ import server.utils.MybatisUtils;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ServerThread implements Runnable{
     private Socket socket;
@@ -67,7 +68,9 @@ public class ServerThread implements Runnable{
                 Main.socketMap.put(data.getName(),socket);
             }
             return data;
-        } catch (IOException e) {
+        } catch (SocketException e){
+
+        } catch(IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
